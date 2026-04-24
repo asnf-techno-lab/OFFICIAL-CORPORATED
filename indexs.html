@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ASNF Techno Lab | Official</title>
+    <style>
+        /* ==========================================
+           ASNF TECHNO LAB - OFFICIAL CORPORATE HUB
+           Architect: M. Nabil Irza Prawira
+           Engine: Shinko Engine 15 (Ultra Core)
+           ========================================== */
+        
+        :root {
+            --glass-blur-value: 150px;
+            --glass-blur: blur(var(--glass-blur-value)) saturate(350%);
+            --crystal-bg: rgba(255, 255, 255, 0.03);
+            --crystal-border: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 100%);
+            --crystal-shadow: 0 15px 40px 0 rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            
+            --ios-radius: 32px; 
+            --btn-radius: 40px; 
+            
+            --spring-physics: cubic-bezier(0.4, 1.2, 0.4, 1);
+            --smooth-flow: cubic-bezier(0.25, 1, 0.5, 1);
+            --transition: all 0.5s var(--smooth-flow);
+            
+            --bg-base: #030303;
+            --text-main: #ffffff;
+            --text-sub: rgba(235, 235, 245, 0.65);
+            --accent: #0a84ff;
+            --accent-glow: rgba(10, 132, 255, 0.5);
+            --asnf-gold: #ffd60a;
+            --asnf-purple: #bf5af2;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            font-size: clamp(14px, 1.3vw, 16px); 
+            scrollbar-width: none; 
+        }
+        body::-webkit-scrollbar { display: none; } 
+
+        /* DYNAMIC LERP MESH PARALLAX */
+        .mesh-bg {
+            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1;
+            background-image: 
+                radial-gradient(at 20% 20%, rgba(10, 132, 255, 0.15) 0px, transparent 40%),
+                radial-gradient(at 80% 30%, rgba(191, 90, 242, 0.15) 0px, transparent 40%),
+                radial-gradient(at 90% 80%, rgba(255, 214, 10, 0.1) 0px, transparent 40%),
+                radial-gradient(at 20% 90%, rgba(255, 255, 255, 0.05) 0px, transparent 40%);
+            animation: meshFlow 35s ease-in-out infinite alternate;
+            will-change: transform, background-position;
+        }
+        @keyframes meshFlow { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 0%; } }
+
+        /* BUBBLE ANIMATION */
+        .bubble {
+            position: fixed; bottom: -100px; background: rgba(255, 255, 255, 0.05); border-radius: 50%;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+            animation: floatUp 15s infinite linear; z-index: -1;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
+        }
+
+        /* LOADING SCREEN */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1.2s var(--smooth-flow), visibility 1.2s; will-change: opacity, visibility;
+        }
+        .load-title { font-size: 40px; font-weight: 900; letter-spacing: -2px; color: #fff; animation: popUp 1s var(--spring-physics) forwards; opacity: 0; transform: translateY(20px);}
+        .load-sub { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 5px; text-transform: uppercase; margin-top: 10px; opacity: 0; animation: popUp 1s var(--spring-physics) 0.3s forwards;}
+        @keyframes popUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* ================= ASNF TOP DOCK (TRAPEZOID) ================= */
+        .top-dock-container {
+            position: fixed; top: 0; left: 50%; transform: translateX(-50%) translate3d(0,0,0);
+            width: 100%; max-width: 1200px; z-index: 1000;
+            display: flex; justify-content: center;
+        }
+        
+        .asnf-dock {
+            background: rgba(10, 10, 10, 0.65);
+            backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 40px; width: 85%;
+            /* Trapesium Terbalik (Clip-path) */
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            transition: var(--transition);
+        }
+
+        /* Kiri: Logo Perusahaan */
+        .dock-logo-area { display: flex; align-items: center; gap: 15px; }
+        .asnf-logo {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--asnf-purple));
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 900; font-size: 18px; color: #fff; letter-spacing: -1px;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .dock-brand-name { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; color: #fff; display: none;}
+        @media (min-width: 768px) { .dock-brand-name { display: block; } }
+
+        /* Tengah: Judul */
+        .dock-center-title { font-size: 15px; font-weight: 700; color: var(--text-sub); letter-spacing: 2px; text-transform: uppercase;}
+
+        /* Kanan: Hamburger Menu */
+        .hamburger-menu {
+            width: 35px; height: 25px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;
+        }
+        .hamburger-line {
+            width: 100%; height: 3px; background: #fff; border-radius: 5px; transition: var(--transition);
+        }
+        
+        /* Mobile Overlay Menu */
+        .mobile-menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px;
+            opacity: 0; visibility: hidden; transition: var(--transition);
+        }
+        .mobile-menu-overlay.active { opacity: 1; visibility: visible; }
+        .menu-link {
+            font-size: 28px; font-weight: 800; color: var(--text-sub); text-decoration: none; transition: var(--transition);
+        }
+        .menu-link:hover, .menu-link.active { color: #fff; transform: scale(1.1); }
+
+        /* ================= LAYOUT & TABS ================= */
+        .app-layout { max-width: 1100px; margin: 0 auto; padding: clamp(20px, 5vw, 40px); padding-top: 120px; padding-bottom: 80px; box-sizing: border-box; }
+        
+        .tab-section { display: none; opacity: 0; transform: scale(0.96) translateY(30px) translate3d(0,0,0); transition: var(--transition); will-change: opacity, transform, filter; }
+        .tab-section.active { display: block; opacity: 1; transform: scale(1) translateY(0) translate3d(0,0,0); animation: smoothEntry 0.8s var(--spring-physics) forwards; }
+        @keyframes smoothEntry { 0% { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(15px); } 100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+
+        /* HEADERS */
+        .hero-header { text-align: center; margin-bottom: 60px; margin-top: 20px; }
+        .hero-title { font-size: clamp(35px, 6vw, 65px); font-weight: 900; letter-spacing: -2px; margin: 0; background: linear-gradient(to right, #fff, rgba(255,255,255,0.6)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { font-size: clamp(14px, 2vw, 16px); color: var(--accent); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 15px; }
+
+        /* CRYSTAL CARDS */
+        .shinko-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 28vw, 360px), 1fr)); gap: 30px; }
+        .glass-card {
+            background: var(--crystal-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: var(--ios-radius); padding: 35px; box-shadow: var(--crystal-shadow); color: #fff; position: relative; overflow: hidden;
+            transition: transform 0.6s var(--spring-physics), box-shadow 0.6s var(--smooth-flow); display: flex; flex-direction: column; will-change: transform;
+        }
+        .glass-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--ios-radius); padding: 1px; background: var(--crystal-border);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+        }
+        .glass-card:hover { transform: scale(1.02) translateY(-8px) translate3d(0,0,0); box-shadow: 0 25px 50px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,255,255,0.1); z-index: 10;}
+
+        /* BUTTONS */
+        .btn-glass {
+            display: inline-flex; justify-content: center; align-items: center; text-decoration: none; box-sizing: border-box; text-align: center;
+            background: rgba(255,255,255,0.08); color: #fff; gap: 10px;
+            padding: 18px 30px; border-radius: var(--btn-radius); font-weight: 800; font-size: 15px; letter-spacing: 1px; 
+            transition: transform 0.5s var(--spring-physics), background 0.4s, box-shadow 0.4s; border: 1px solid rgba(255,255,255,0.15);
+            position: relative; overflow: hidden; transform: translateZ(0); cursor: pointer; width: 100%; will-change: transform;
+        }
+        .btn-glass:hover { background: #fff; color: #000; transform: scale(1.04) translateY(-3px) translate3d(0,0,0); box-shadow: 0 15px 35px rgba(255,255,255,0.3); }
+        .btn-primary { background: var(--text-main); color: #000; border: none; box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+        .btn-primary:hover { background: var(--accent); color: #fff; box-shadow: 0 15px 40px var(--accent-glow);}
+
+        /* BADGES */
+        .badge { padding: 6px 14px; border-radius: 12px; font-size: 11px; font-weight: 800; margin-bottom: 20px; display: inline-flex; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        .b-blue { background: rgba(10, 132, 255, 0.15); color: var(--accent); border-color: rgba(10, 132, 255, 0.3);}
+        .b-purple { background: rgba(191, 90, 242, 0.15); color: var(--asnf-purple); border-color: rgba(191, 90, 242, 0.3);}
+        .b-gold { background: rgba(255, 214, 10, 0.15); color: var(--asnf-gold); border-color: rgba(255, 214, 10, 0.3);}
+
+        /* LOGOS IN CARDS */
+        .module-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .card-logo { width: 80px; height: 80px; border-radius: 24px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; font-size: 28px; font-weight: 900; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .logo-shinko { background: linear-gradient(135deg, var(--accent), var(--asnf-purple)); color: #fff; }
+        .logo-anv { background: linear-gradient(135deg, #ff453a, #ff9f0a); color: #fff; }
+        .logo-tnv { background: linear-gradient(135deg, #32d74b, #0a84ff); color: #fff; }
+
+        /* DIRECTOR LAYOUT */
+        .director-layout { display: flex; flex-direction: column; gap: 40px; align-items: center; }
+        @media (min-width: 850px) { .director-layout { flex-direction: row; align-items: flex-start; text-align: left; } }
+        .director-img-container { flex-shrink: 0; width: 100%; max-width: 320px; position: relative; }
+        .director-img { width: 100%; aspect-ratio: 9/16; object-fit: cover; border-radius: 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.7); border: 2px solid rgba(255,255,255,0.1); position: relative; z-index: 2;}
+        .director-halo { position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px; background: linear-gradient(45deg, var(--accent), var(--asnf-purple)); border-radius: 40px; z-index: 1; filter: blur(30px); opacity: 0.5; animation: breath 4s ease-in-out infinite alternate;}
+        @keyframes breath { 0% {transform: scale(1); opacity: 0.3;} 100% {transform: scale(1.05); opacity: 0.6;} }
+        .director-info { flex-grow: 1; }
+
+    </style>
+</head>
+<body>
+
+    <div class="mesh-bg" id="meshBg"></div>
+    <div id="bubble-container"></div> <div id="loading-screen">
+        <div class="load-title">ASNF</div>
+        <div class="load-sub">Official Corporate</div>
+    </div>
+
+    <div class="top-dock-container">
+        <nav class="asnf-dock">
+            <div class="dock-logo-area">
+                <div class="asnf-logo">AF</div>
+                <div class="dock-brand-name">ASNF Techno Lab</div>
+            </div>
+            <div class="dock-center-title">Main Portal</div>
+            <div class="hamburger-menu" onclick="toggleMobileMenu()">
+                <div class="hamburger-line" id="hl1"></div>
+                <div class="hamburger-line" id="hl2"></div>
+                <div class="hamburger-line" id="hl3"></div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <a href="#" class="menu-link active" onclick="switchMenu('home'); toggleMobileMenu();">Home / Intro</a>
+        <a href="#" class="menu-link" onclick="switchMenu('about'); toggleMobileMenu();">About Us</a>
+        <a href="#" class="menu-link" onclick="switchMenu('director'); toggleMobileMenu();">Board of Director</a>
+        <a href="#" class="menu-link" onclick="switchMenu('ecosystem'); toggleMobileMenu();">Flagship Ecosystem</a>
+        <a href="#" class="menu-link" onclick="switchMenu('services'); toggleMobileMenu();">Services & Studio</a>
+        <a href="#" class="menu-link" onclick="switchMenu('vault'); toggleMobileMenu();">The Vault Data</a>
+        <a href="#" class="menu-link" onclick="switchMenu('contact'); toggleMobileMenu();">Contact & Support</a>
+    </div>
+
+    <div class="app-layout">
+        
+        <div id="menu-home" class="tab-section active">
+            <header class="hero-header">
+                <h1 class="hero-title">ASNF Techno Lab</h1>
+                <p class="hero-subtitle">Pushing Hardware Limits. Crafting Next-Gen Systems.</p>
+            </header>
+
+            <div class="glass-card" style="text-align: center; border-bottom: 4px solid var(--accent);">
+                <h2 style="font-size: 32px; margin-top: 0;">Welcome to Our Hub</h2>
+                <p style="color: var(--text-sub); line-height: 1.9; font-size: 17px; margin-bottom: 40px;">
+                    Let me introduce myself. We are from the <strong>ASNF Techno Lab</strong> family. It is a small and not yet well-known company, but we are here to make good websites, and bring Apple-like designs to life. I don't expect whether there is income or not, but I just want you to be satisfied with what you want. I also provide Top-Tier Root Module Files which you can see in our Ecosystem menu.
+                </p>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-glass" style="width: auto; padding: 18px 40px;" onclick="switchMenu('ecosystem')">EXPLORE ECOSYSTEM</button>
+                    <button class="btn-glass btn-primary" style="width: auto; padding: 18px 40px;" onclick="switchMenu('services')">REGISTER AND BUY</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu-about" class="tab-section">
+            <header class="hero-header">
+                <h1 class="hero-title">About Company</h1>
+                <p class="hero-subtitle">Our Vision & Mission</p>
+            </header>
+
+            <div class="glass-card" style="margin-bottom: 30px;">
+                <h3 style="font-size: 26px; margin-top: 0; color: #fff;">History & Foundation</h3>
+                <p style="color: var(--text-sub); line-height: 1.9; font-size: 16px;">
+                    ASNF Techno Lab, founded on <strong>2026/03/20</strong> by M. Nabil and Gemini AI, was established in Aceh, Lhokseumawe City, with the capital of a Mid-Range Device (Infinix Hot 50 Pro Plus) and a Dell Latitude e527 Laptop.<br><br>
+                    My goal in creating this company was initially focused on creating root modules along with a web portal to download them. However, wanting to expand the ecosystem, I created a pioneering venture between ASNF Techno Lab and AnXin Technology Project. AnXin Technology Project operates as a sub-brand of the AnXin A.I. ecosystem, fully managed and operated by ASNF Techno Lab.
+                </p>
+            </div>
+
+            <div class="shinko-grid" style="grid-template-columns: 1fr;">
+                <div class="glass-card" style="border-left: 5px solid var(--accent);">
+                    <h3 style="font-size: 22px; margin-top: 0; color: var(--accent);">Our Mission</h3>
+                    <p style="color: var(--text-sub); line-height: 1.8; font-size: 16px;">
+                        Trying to break the limits and performance of mobile devices from the Root Module level, and also providing Personal or Store Promotions through premium web architectures like Shinko Bio.
+                    </p>
+                </div>
+                <div class="glass-card" style="border-left: 5px solid var(--asnf-purple);">
+                    <h3 style="font-size: 22px; margin-top: 0; color: var(--asnf-purple);">Focus Areas</h3>
+                    <p style="color: var(--text-sub); line-height: 1.8; font-size: 16px;">
+                        ASNF Techno Lab focuses on several core areas: Web Development (UI/UX), Root Module Architecture, and Artificial Intelligence through the AnXin Technology Project.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu-director" class="tab-section">
+            <header class="hero-header">
+                <h1 class="hero-title">Board Of Director</h1>
+                <p class="hero-subtitle">The Architect Behind ASNF</p>
+            </header>
+
+            <div class="glass-card">
+                <div class="director-layout">
+                    <div class="director-img-container">
+                        <div class="director-halo"></div>
+                        <img src="asnf-aXn.png" class="director-img" alt="M. Nabil Irza Prawira" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'320\' height=\'568\'><rect width=\'320\' height=\'568\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'24\' fill=\'%23fff\' text-anchor=\'middle\' dominant-baseline=\'middle\'>Director Photo (9:16)</text></svg>'">
+                    </div>
+                    
+                    <div class="director-info">
+                        <div class="badge b-gold">Vocational School Student</div>
+                        <h2 style="font-size: 38px; font-weight: 900; margin: 0 0 10px; letter-spacing: -1px;">M. Nabil Irza Prawira</h2>
+                        <div style="font-size: 18px; color: var(--accent); font-weight: 700; margin-bottom: 25px;">Founder. CEO. Director. (FCEOD)</div>
+                        
+                        <p style="color: var(--text-sub); line-height: 1.9; font-size: 16px; margin-bottom: 30px;">
+                            He is a 17-year-old young man who has started learning about cellphone parts, software, and hardware since he was in the 1st grade of junior high school. He began to understand the realm of ROM modification since the first grade of vocational school, and started understanding the web domain and Dev Module development since the second semester of the second grade of vocational school.<br><br>
+                            M. Nabil is an orphan who only lives with his mother. He was abandoned by ALM. Iria*** (TNI Major), who died of a stroke at the end of 2024.
+                        </p>
+                        
+                        <blockquote style="border-left: 4px solid var(--asnf-gold); padding-left: 20px; margin: 0; font-style: italic; font-size: 18px; color: #fff;">
+                            "Don't give up when you are still young, because your future is waiting for you."
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu-ecosystem" class="tab-section">
+            <header class="hero-header">
+                <h1 class="hero-title">Flagship Ecosystem</h1>
+                <p class="hero-subtitle">Web & Root Modules Matrix</p>
+            </header>
+
+            <h2 style="font-size: 28px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 30px;">Web Architecture</h2>
+            <div class="shinko-grid">
+                
+                <div class="glass-card">
+                    <div class="card-logo logo-shinko">S32</div>
+                    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 10px;">ShinkoUI 32</h3>
+                    <p style="color: var(--text-sub); line-height: 1.6; margin-bottom: 25px; flex-grow: 1;">A website that contains a list of Root Modules that have been created.</p>
+                    <a href="https://asnf-techno-lab.github.io/ShinkoUI-31/" target="_blank" class="btn-glass">VISIT SITE</a>
+                </div>
+
+                <div class="glass-card">
+                    <div style="width: 80px; height: 80px; margin-bottom: 20px; border-radius: 24px; background: linear-gradient(135deg, var(--accent), var(--asnf-purple)); display: flex; justify-content: center; align-items: center; box-shadow: 0 0 30px var(--accent-glow);">
+                        <span style="font-size: 32px; font-weight: 900; color: #fff;">SB</span>
+                    </div>
+                    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 10px;">Shinko Bio</h3>
+                    <p style="color: var(--text-sub); line-height: 1.6; margin-bottom: 25px; flex-grow: 1;">A website that contains your personal data, shop, along with your rank or position and title.</p>
+                    <a href="https://asnf-techno-lab.github.io/Shinko-bio/" target="_blank" class="btn-glass">VISIT SITE</a>
+                </div>
+
+                <div class="glass-card">
+                    <div class="card-logo logo-anv">ANV</div>
+                    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 10px;">AI Name Vault</h3>
+                    <p style="color: var(--text-sub); line-height: 1.6; margin-bottom: 25px; flex-grow: 1;">A website that focuses on creating the names you want with various categories available.</p>
+                    <a href="https://asnf-techno-lab.github.io/storyname/" target="_blank" class="btn-glass">VISIT SITE</a>
+                </div>
+
+                <div class="glass-card">
+                    <div class="card-logo logo-tnv">TNV</div>
+                    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 10px;">The Name Vault</h3>
+                    <p style="color: var(--text-sub); line-height: 1.6; margin-bottom: 25px; flex-grow: 1;">A website that contains hundreds of names that I recommend if you want to use them for stories or whatever.</p>
+                    <a href="https://nabilirzap-storywriter.github.io/" target="_blank" class="btn-glass">VISIT SITE</a>
+                </div>
+
+                <div class="glass-card">
+                    <div class="badge b-gold" style="margin-bottom: 10px;">X6880 Exclusive</div>
+                    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 10px;">ASNF Rom Vault</h3>
+                    <p style="color: var(--text-sub); line-height: 1.6; margin-bottom: 25px; flex-grow: 1;">A website containing a list of custom ROMs and recovery specifically for Infinix Hot 50 Pro Plus (X6880) phones.</p>
+                    <a href="https://asnf-techno-lab.github.io/ASNF-Rom/" target="_blank" class="btn-glass">VISIT SITE</a>
+                </div>
+
+                <div class="glass-card" style="border-color: var(--accent); box-shadow: 0 0 40px rgba(10,132,255,0.2);">
+                    <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 85px; height: 85px; filter: drop-shadow(0 15px 30px rgba(0,122,255,0.4)); margin-bottom: 20px;">
+                        <defs><linearGradient id="logoGradGlass" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.9)"/><stop offset="100%" stop-color="rgba(0,122,255,0.8)"/></linearGradient></defs>
+                        <polygon points="50,5 90,25 90,75 50,95 10,75 10,25" fill="rgba(255,255,255,0.15)" stroke="url(#logoGradGlass)" stroke-width="4.5" stroke-linejoin="round" style="backdrop-filter: blur(5px);"/>
+                        <path d="M 50 25 L 30 70 M 50 25 L 70 70 M 35 55 L 65 55 M 50 40 L 50 85" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="50" cy="25" r="4" fill="#ffffff"/><circle cx="50" cy="85" r="4" fill="#ffffff"/>
+                    </svg>
+                    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 10px;">AnXin A.I</h3>
+                    <p style="color: var(--text-sub); line-height: 1.6; margin-bottom: 25px; flex-grow: 1;">A first AI web with the best design. Even though the AI is not very smart yet, this web is purely built for design, animation, and AI UI/UX.</p>
+                    <a href="https://asnf-techno-lab.github.io/AnXin-A.I/" target="_blank" class="btn-glass btn-primary">VISIT SITE</a>
+                </div>
+            </div>
+
+            <h2 style="font-size: 28px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-top: 60px; margin-bottom: 30px;">Root Modules Architecture</h2>
+            <div class="shinko-grid">
+                
+                <div class="glass-card">
+                    <img src="mrpm.png" class="module-img" alt="MRP Module" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'1600\' height=\'900\'><rect width=\'1600\' height=\'900\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'80\' fill=\'%23fff\' text-anchor=\'middle\' dominant-baseline=\'middle\'>MRP (16:9)</text></svg>'">
+                    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 10px;">Magic Random Pro (MRP)</h3>
+                    <p style="color: var(--text-sub); line-height: 1.6;">Root modules covering various parts for your phone with spoofing available. Evolving continuously from V11 up to V20.</p>
+                </div>
+
+                <div class="glass-card">
+                    <img src="AIOG.png" class="module-img" alt="AIOG Module" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'1600\' height=\'900\'><rect width=\'1600\' height=\'900\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'80\' fill=\'%23fff\' text-anchor=\'middle\' dominant-baseline=\'middle\'>AIOG (16:9)</text></svg>'">
+                    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 10px;">All In One Genshin (AIOG)</h3>
+                    <p style="color: var(--text-sub); line-height: 1.6;">Root Module that focuses on pure performance for Genshin games. In the latest variants, it covers several games, starting from V3 to V6.7.</p>
+                </div>
+
+                <div class="glass-card">
+                    <img src="vsm.png" class="module-img" alt="V Series Module" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'1600\' height=\'900\'><rect width=\'1600\' height=\'900\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'sans-serif\' font-size=\'80\' fill=\'%23fff\' text-anchor=\'middle\' dominant-baseline=\'middle\'>V Series (16:9)</text></svg>'">
+                    <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 10px;">V Series Module</h3>
+                    <p style="color: var(--text-sub); line-height: 1.6;">Similar to MRP, but this line will serve as the true successor to the MRP Module framework. Series starting from V5 onwards.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="menu-services" class="tab-section">
+            <header class="hero-header">
+                <h1 class="hero-title">Studio Services</h1>
+                <p class="hero-subtitle">Premium Web Solutions</p>
+            </header>
+
+            <div class="glass-card" style="margin-bottom: 40px; text-align: center;">
+                <h2 style="font-size: 28px; margin-top: 0; color: #fff;">Apple Standard Web. Without Apple Price.</h2>
+                <p style="color: var(--text-sub); font-size: 16px; line-height: 1.8; max-width: 800px; margin: 0 auto 20px;">
+                    We build Single Page Applications (SPA) with iOS/MacOS UI/UX standards that are clean, snappy, and luxurious. Perfect for Personal Bios, Portfolios, or Business Landing Pages.
+                </p>
+            </div>
+
+            <div class="shinko-grid" style="margin-bottom: 40px;">
+                <div class="glass-card">
+                    <div class="badge b-blue">Lite Package</div>
+                    <div style="font-size: 32px; font-weight: 900; color: #fff; margin: 15px 0;">Rp60.000 - 100.000</div>
+                    <ul style="list-style: none; padding: 0; margin: 0 0 25px; color: var(--text-sub); font-size: 15px; line-height: 1.8;">
+                        <li>✅ Static Landing Page</li>
+                        <li>✅ Full Apple-like Design</li>
+                        <li>✅ Mobile Responsive</li>
+                        <li>✅ Free Netlify Hosting Setup</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card" style="border-color: var(--accent); box-shadow: 0 10px 40px var(--accent-glow); transform: scale(1.05); z-index: 2;">
+                    <div class="badge" style="background: var(--accent); color: #fff;">Pro Package (Recommended)</div>
+                    <div style="font-size: 32px; font-weight: 900; color: #fff; margin: 15px 0;">Rp150.000 - 300.000</div>
+                    <ul style="list-style: none; padding: 0; margin: 0 0 25px; color: var(--text-sub); font-size: 15px; line-height: 1.8;">
+                        <li>✅ All Lite Features</li>
+                        <li>✅ Firebase Real-time DB</li>
+                        <li>✅ Manual Login/Register System</li>
+                        <li>✅ Secure Data Storage</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card">
+                    <div class="badge b-gold">Premium Package</div>
+                    <div style="font-size: 32px; font-weight: 900; color: #fff; margin: 15px 0;">Rp430.000+</div>
+                    <ul style="list-style: none; padding: 0; margin: 0 0 25px; color: var(--text-sub); font-size: 15px; line-height: 1.8;">
+                        <li>✅ All Pro Features</li>
+                        <li>✅ Custom Admin Dashboard</li>
+                        <li>✅ PWA (Installable on Mobile)</li>
+                        <li>✅ Exclusive UI/UX Consultation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="glass-card" style="text-align: center; background: rgba(0,0,0,0.5);">
+                <h3 style="margin-top: 0; font-size: 22px;">How to Order & Payment</h3>
+                <p style="color: var(--text-sub); font-size: 16px; margin-bottom: 20px;">Support our startup company by donating or sending payments directly via:</p>
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">SociaBuzz Portal:</div>
+                <a href="https://sociabuzz.com/nabilirzap" target="_blank" class="btn-glass" style="width: auto; padding: 15px 30px; border-color: var(--asnf-gold); color: var(--asnf-gold); margin-bottom: 20px;">sociabuzz.com/nabilirzap</a>
+                
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">Direct Transfer (DANA/GoPay/ShopeePay):</div>
+                <div style="font-size: 28px; font-weight: 900; color: var(--accent); letter-spacing: 2px; margin-bottom: 20px;">0821-6065-4849</div>
+                
+                <p style="color: var(--text-sub); font-size: 14.5px;">After sending payment/donation, please send the screenshot proof to our Instagram DM to start the project.</p>
+            </div>
+        </div>
+
+        <div id="menu-vault" class="tab-section">
+            <header class="hero-header">
+                <h1 class="hero-title">The Vault</h1>
+                <p class="hero-subtitle">Open Source Data & Repositories</p>
+            </header>
+
+            <div class="glass-card" style="text-align: center;">
+                <div style="font-size: 50px; margin-bottom: 20px;">🔓</div>
+                <h2 style="margin-top: 0;">ASNF Open Repository</h2>
+                <p style="color: var(--text-sub); line-height: 1.8; font-size: 16px; margin-bottom: 30px;">
+                    ASNF Techno Lab believes in the power of the community. "The Vault" is our open-source sector where we share base kernels, custom recovery ports, and UI Boilerplates (like Shinko Engine default codes) for the public to learn and modify.
+                </p>
+                <a href="https://asnf-techno-lab.github.io/ASNF-Rom/" target="_blank" class="btn-glass btn-primary" style="width: auto; padding: 18px 40px;">ACCESS X6880 ROM VAULT</a>
+            </div>
+        </div>
+
+        <div id="menu-contact" class="tab-section">
+            <header class="hero-header">
+                <h1 class="hero-title">Contact & Support</h1>
+                <p class="hero-subtitle">Get in Touch with ASNF</p>
+            </header>
+
+            <div class="shinko-grid" style="grid-template-columns: 1fr;">
+                
+                <div class="glass-card">
+                    <h3 style="font-size: 22px; margin-top: 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Business & Inquiries (Email)</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 16px;">
+                        <li style="padding: 10px 0; color: var(--accent); font-weight: 600;">📧 mnabilirzaprawira@gmail.com</li>
+                        <li style="padding: 10px 0; color: var(--accent); font-weight: 600;">📧 asnf.support@gmail.com</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="font-size: 22px; margin-top: 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Social Networks</h3>
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                        <a href="https://instagram.com/n4bilirzap.zw" target="_blank" class="btn-glass" style="justify-content: flex-start; border-color: rgba(191,90,242,0.3);">📸 Instagram: @n4bilirzap.zw</a>
+                        <a href="https://tiktok.com/@n4bilirzap.zw" target="_blank" class="btn-glass" style="justify-content: flex-start; border-color: rgba(255,255,255,0.2);">🎵 TikTok: @n4bilirzap.zw</a>
+                        <a href="https://www.threads.net/@n4bilirzap.zw" target="_blank" class="btn-glass" style="justify-content: flex-start; border-color: rgba(255,255,255,0.2);">🧵 Threads: @n4bilirzap.zw</a>
+                        <a href="https://t.me/n4bilirz" target="_blank" class="btn-glass" style="justify-content: flex-start; border-color: rgba(10,132,255,0.3);">✈️ Telegram: @n4bilirz</a>
+                        <a href="https://www.facebook.com/share/1BpVY7mCj3/" target="_blank" class="btn-glass" style="justify-content: flex-start; border-color: rgba(10,132,255,0.3);">📘 Facebook: M Nabil</a>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="background: rgba(255, 214, 10, 0.1); border-color: rgba(255, 214, 10, 0.3);">
+                    <h3 style="font-size: 22px; margin-top: 0; color: var(--asnf-gold);">Support Our Startup</h3>
+                    <p style="color: #fff; line-height: 1.8; font-size: 16px;">
+                        Building next-gen UIs and breaking hardware limits takes time and resources. Support ASNF Techno Lab to keep creating open-source miracles.
+                    </p>
+                    <a href="https://sociabuzz.com/nabilirzap" target="_blank" class="btn-glass btn-primary" style="background: var(--asnf-gold); color: #000; margin-top: 15px;">DONATE VIA SOCIABUZZ</a>
+                </div>
+
+            </div>
+            
+            <div style="text-align: center; margin-top: 60px; font-size: 13px; color: rgba(255,255,255,0.3); letter-spacing: 1px; font-weight: 600;">
+                &copy; 2026 ASNF Techno Lab. All Rights Reserved.<br>
+                Powered by Shinko Engine 15 Ultra Core.
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ==========================================
+        // SHINKO ENGINE 15 - LOGIC & UTILS
+        // ==========================================
+
+        // 1. DYNAMIC BUBBLE GENERATOR
+        function createBubbles() {
+            const container = document.getElementById('bubble-container');
+            const bubbleCount = 15;
+            for (let i = 0; i < bubbleCount; i++) {
+                let bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                // Randomize size, position, and delay
+                let size = Math.random() * 60 + 20 + 'px';
+                bubble.style.width = size;
+                bubble.style.height = size;
+                bubble.style.left = Math.random() * 100 + 'vw';
+                bubble.style.animationDuration = Math.random() * 10 + 10 + 's';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(bubble);
+            }
+        }
+        createBubbles();
+
+        // 2. ASNF HAPTIC ENGINE
+        function triggerHaptic(duration = 40) {
+            if (navigator.vibrate) { navigator.vibrate(duration); }
+        }
+        document.querySelectorAll('.btn-glass, .menu-link, .hamburger-menu').forEach(el => {
+            el.addEventListener('click', () => triggerHaptic(50));
+        });
+
+        // 3. AUTO FIX INTERCEPTOR
+        window.onerror = function(message) {
+            console.warn("[ASNF Shinko Engine 15] Auto-Fix Intercepted:", message);
+            return true; 
+        };
+
+        // 4. HAMBURGER MENU LOGIC
+        const mobileMenu = document.getElementById('mobileMenu');
+        const hl1 = document.getElementById('hl1');
+        const hl2 = document.getElementById('hl2');
+        const hl3 = document.getElementById('hl3');
+        let menuOpen = false;
+
+        function toggleMobileMenu() {
+            menuOpen = !menuOpen;
+            if(menuOpen) {
+                mobileMenu.classList.add('active');
+                hl1.style.transform = 'rotate(45deg) translate(5px, 5px)';
+                hl2.style.opacity = '0';
+                hl3.style.transform = 'rotate(-45deg) translate(7px, -8px)';
+            } else {
+                mobileMenu.classList.remove('active');
+                hl1.style.transform = 'none';
+                hl2.style.opacity = '1';
+                hl3.style.transform = 'none';
+            }
+        }
+
+        // 5. SMART TAB NAVIGATION
+        function switchMenu(menuId) {
+            document.querySelectorAll('.tab-section').forEach(tab => {
+                tab.classList.remove('active');
+                setTimeout(() => { if(!tab.classList.contains('active')) tab.style.display = 'none'; }, 500); 
+            });
+            
+            // Update active state in mobile menu links
+            document.querySelectorAll('.menu-link').forEach(link => { link.classList.remove('active'); });
+            event.target.classList.add('active'); // Add active to clicked link
+
+            // Update title in dock
+            const dockTitle = document.querySelector('.dock-center-title');
+            if(menuId === 'home') dockTitle.innerText = 'Main Portal';
+            else if(menuId === 'about') dockTitle.innerText = 'About Us';
+            else if(menuId === 'director') dockTitle.innerText = 'Director';
+            else if(menuId === 'ecosystem') dockTitle.innerText = 'Ecosystem';
+            else if(menuId === 'services') dockTitle.innerText = 'Services';
+            else if(menuId === 'vault') dockTitle.innerText = 'The Vault';
+            else if(menuId === 'contact') dockTitle.innerText = 'Contact';
+
+            const targetTab = document.getElementById('menu-' + menuId);
+            targetTab.style.display = 'block';
+            void targetTab.offsetWidth; // Force Reflow
+            targetTab.classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 6. LERP PARALLAX
+        const meshBg = document.getElementById('meshBg');
+        let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+        const lerpFactor = 0.05;
+
+        function updateParallax() {
+            if(window.innerWidth > 800) {
+                currentX += (targetX - currentX) * lerpFactor;
+                currentY += (targetY - currentY) * lerpFactor;
+                meshBg.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(1.05)`;
+            }
+            requestAnimationFrame(updateParallax);
+        }
+        window.addEventListener('mousemove', (e) => {
+            targetX = (e.clientX / window.innerWidth - 0.5) * 30; 
+            targetY = (e.clientY / window.innerHeight - 0.5) * 30;
+        });
+        window.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
+        requestAnimationFrame(updateParallax);
+
+        // 7. BOOT LOGIC
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loading-screen');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.visibility = 'hidden';
+                    loader.style.display = 'none';
+                }, 1200); 
+            }, 3000); 
+        });
+
+    </script>
+</body>
+</html>
