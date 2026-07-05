@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>404 Not Found | ASNF Techno Lab</title>
+    <style>
+        :root {
+            --glass-blur-value: 200px;
+            --glass-blur: blur(var(--glass-blur-value)) saturate(400%);
+            --crystal-bg: rgba(255, 255, 255, 0.03);
+            --crystal-border: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 100%);
+            --crystal-shadow: 0 15px 40px 0 rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            --ios-radius: 32px; 
+            --btn-radius: 40px; 
+            --spring-physics: cubic-bezier(0.4, 1.2, 0.4, 1);
+            --bg-base: #030303;
+            --text-main: #ffffff;
+            --text-sub: rgba(235, 235, 245, 0.65);
+            --accent: #0a84ff;
+            --accent-glow: rgba(10, 132, 255, 0.5);
+        }
+        body {
+            margin: 0; padding: 0; background-color: var(--bg-base); color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden;
+        }
+        .mesh-bg {
+            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1;
+            background-image: radial-gradient(at 20% 20%, rgba(10, 132, 255, 0.12) 0px, transparent 40%),
+                              radial-gradient(at 80% 30%, rgba(191, 90, 242, 0.12) 0px, transparent 40%);
+            animation: meshFlow 40s ease-in-out infinite alternate;
+        }
+        @keyframes meshFlow { 0% { transform: scale(1) translate3d(0,0,0); } 100% { transform: scale(1.1) translate3d(-2%, -2%, 0); } }
+        .glass-card {
+            background: var(--crystal-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: var(--ios-radius); padding: 50px 40px; box-shadow: var(--crystal-shadow); 
+            text-align: center; max-width: 400px; width: 90%; position: relative; animation: popUp 0.8s var(--spring-physics) forwards;
+        }
+        .glass-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--ios-radius); padding: 1px; background: var(--crystal-border);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+        }
+        @keyframes popUp { 0% { opacity: 0; transform: translateY(40px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .error-code { font-size: 80px; font-weight: 900; margin: 0; background: linear-gradient(135deg, var(--accent), #bf5af2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .error-msg { color: var(--text-sub); margin: 15px 0 30px; line-height: 1.6; }
+        .btn-glass {
+            display: inline-flex; justify-content: center; align-items: center; text-decoration: none; 
+            background: var(--text-main); color: #000; padding: 16px 30px; border-radius: var(--btn-radius); 
+            font-weight: 800; font-size: 15px; transition: transform 0.4s var(--spring-physics), box-shadow 0.4s;
+            border: none; box-shadow: 0 10px 30px rgba(255,255,255,0.2); width: 100%; box-sizing: border-box; cursor: pointer;
+        }
+        .btn-glass:hover { transform: scale(1.04) translateY(-3px); box-shadow: 0 15px 40px var(--accent-glow); background: var(--accent); color: #fff;}
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <div class="glass-card">
+        <h1 class="error-code">404</h1>
+        <h2 style="margin: 10px 0 0;">System Void</h2>
+        <p class="error-msg">The portal you are looking for has been moved or does not exist in the ASNF Ecosystem.</p>
+        <a href="index.html" class="btn-glass" onclick="triggerHaptic()">RETURN TO HUB</a>
+    </div>
+    <script>
+        function triggerHaptic() { if (navigator.vibrate) { navigator.vibrate(50); } }
+    </script>
+</body>
+</html>
