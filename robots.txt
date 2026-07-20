@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /admin/
 
-Sitemap: https://asnf-techno-lab.github.io/sitemap.xml
+Sitemap: https://asnf-techno-lab.github.io/OFFICIAL-CORPORATED/sitemap.xml
